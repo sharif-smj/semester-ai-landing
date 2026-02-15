@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Semester AI — Your AI-Powered Study Companion</title>
+<meta name="description" content="AI tutors, PDF summaries, audio notes & smart quizzes. The study app built for African university students.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --primary:#6C5CE7;--primary-dark:#5A4BD1;--accent:#00CECE;
+  --bg:#0A0A1A;--bg-card:#14142B;--bg-card-hover:#1E1E3F;
+  --text:#E8E8F0;--text-muted:#9090B0;--text-bright:#FFFFFF;
+  --gradient:linear-gradient(135deg,#6C5CE7,#00CECE);
+  --radius:16px;--radius-sm:10px;
+}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+
+/* Utility */
+.container{max-width:1140px;margin:0 auto;padding:0 24px}
+.badge{display:inline-block;background:rgba(108,92,231,.15);color:var(--primary);font-size:.75rem;font-weight:600;padding:6px 14px;border-radius:100px;letter-spacing:.05em;text-transform:uppercase}
+.section-title{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;color:var(--text-bright);margin-bottom:16px}
+.section-sub{color:var(--text-muted);font-size:1.05rem;max-width:560px;margin:0 auto 48px}
+.text-center{text-align:center}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:16px 32px;border-radius:100px;font-weight:600;font-size:1rem;transition:all .25s;cursor:pointer;border:none}
+.btn-primary{background:var(--gradient);color:#fff;box-shadow:0 4px 24px rgba(108,92,231,.35)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(108,92,231,.45)}
+.btn-outline{border:2px solid rgba(108,92,231,.4);color:var(--text-bright);background:transparent}
+.btn-outline:hover{border-color:var(--primary);background:rgba(108,92,231,.08)}
+
+/* Nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 0;transition:background .3s}
+nav.scrolled{background:rgba(10,10,26,.92);backdrop-filter:blur(16px);border-bottom:1px solid rgba(108,92,231,.1)}
+nav .container{display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-size:1.3rem;font-weight:800;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-links{display:flex;gap:32px;align-items:center}
+.nav-links a{font-size:.9rem;color:var(--text-muted);font-weight:500;transition:color .2s}
+.nav-links a:hover{color:var(--text-bright)}
+.nav-cta{padding:10px 24px !important;font-size:.85rem !important}
+.mobile-toggle{display:none;background:none;border:none;color:var(--text-bright);font-size:1.5rem;cursor:pointer}
+
+/* Hero */
+.hero{padding:140px 0 80px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-200px;right:-200px;width:600px;height:600px;background:radial-gradient(circle,rgba(108,92,231,.12),transparent 70%);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:-100px;left:-100px;width:400px;height:400px;background:radial-gradient(circle,rgba(0,206,206,.08),transparent 70%);pointer-events:none}
+.hero .container{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.hero-content{position:relative;z-index:1}
+.hero h1{font-size:clamp(2.2rem,5vw,3.5rem);font-weight:800;line-height:1.12;color:var(--text-bright);margin:20px 0 24px}
+.hero h1 span{background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{font-size:1.15rem;color:var(--text-muted);margin-bottom:36px;max-width:480px}
+.hero-buttons{display:flex;gap:16px;flex-wrap:wrap}
+.hero-visual{position:relative;z-index:1;display:flex;justify-content:center}
+.hero-phone{width:280px;border-radius:32px;box-shadow:0 24px 80px rgba(108,92,231,.2);border:2px solid rgba(108,92,231,.15)}
+.hero-stats{display:flex;gap:40px;margin-top:48px}
+.hero-stat span{display:block}
+.hero-stat .num{font-size:1.6rem;font-weight:800;color:var(--text-bright)}
+.hero-stat .label{font-size:.8rem;color:var(--text-muted);margin-top:2px}
+
+/* Features */
+.features{padding:100px 0}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px}
+.feature-card{background:var(--bg-card);border:1px solid rgba(108,92,231,.08);border-radius:var(--radius);padding:36px 28px;transition:all .3s}
+.feature-card:hover{background:var(--bg-card-hover);border-color:rgba(108,92,231,.2);transform:translateY(-4px)}
+.feature-icon{width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin-bottom:20px}
+.feature-card h3{font-size:1.15rem;font-weight:700;color:var(--text-bright);margin-bottom:10px}
+.feature-card p{color:var(--text-muted);font-size:.92rem;line-height:1.6}
+.icon-tutor{background:rgba(108,92,231,.15)}
+.icon-pdf{background:rgba(0,206,206,.15)}
+.icon-audio{background:rgba(253,203,110,.15)}
+.icon-quiz{background:rgba(255,107,129,.15)}
+.icon-course{background:rgba(46,213,115,.15)}
+.icon-camera{background:rgba(116,185,255,.15)}
+
+/* Screenshots */
+.screenshots{padding:100px 0;overflow:hidden}
+.screenshots-scroll{display:flex;gap:24px;padding:20px 0;animation:scroll-x 30s linear infinite}
+.screenshots-scroll img{width:220px;border-radius:20px;border:1px solid rgba(108,92,231,.1);flex-shrink:0}
+@keyframes scroll-x{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* Social Proof */
+.social-proof{padding:100px 0}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px;margin-bottom:64px}
+.stat-card{background:var(--bg-card);border-radius:var(--radius);padding:32px;text-align:center;border:1px solid rgba(108,92,231,.06)}
+.stat-card .number{font-size:2.4rem;font-weight:800;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stat-card .desc{color:var(--text-muted);font-size:.9rem;margin-top:4px}
+.reviews{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px}
+.review-card{background:var(--bg-card);border-radius:var(--radius);padding:28px;border:1px solid rgba(108,92,231,.06)}
+.review-stars{color:#FFC312;font-size:1rem;margin-bottom:12px}
+.review-card blockquote{color:var(--text);font-size:.95rem;line-height:1.6;margin-bottom:16px;font-style:italic}
+.review-author{display:flex;align-items:center;gap:12px}
+.review-avatar{width:40px;height:40px;border-radius:50%;background:var(--gradient);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;color:#fff}
+.review-name{font-weight:600;color:var(--text-bright);font-size:.9rem}
+.review-uni{color:var(--text-muted);font-size:.78rem}
+
+/* Pricing */
+.pricing{padding:100px 0}
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;max-width:720px;margin:0 auto}
+.price-card{background:var(--bg-card);border-radius:var(--radius);padding:40px 32px;border:1px solid rgba(108,92,231,.06);position:relative}
+.price-card.popular{border-color:var(--primary);box-shadow:0 0 40px rgba(108,92,231,.15)}
+.price-card.popular::before{content:'MOST POPULAR';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--gradient);color:#fff;font-size:.7rem;font-weight:700;padding:4px 16px;border-radius:100px;letter-spacing:.05em}
+.price-card h3{font-size:1.1rem;font-weight:600;color:var(--text-muted);margin-bottom:8px}
+.price-amount{font-size:2.8rem;font-weight:800;color:var(--text-bright)}
+.price-amount small{font-size:1rem;font-weight:500;color:var(--text-muted)}
+.price-card ul{list-style:none;margin:28px 0;display:flex;flex-direction:column;gap:14px}
+.price-card li{color:var(--text);font-size:.92rem;display:flex;align-items:center;gap:10px}
+.price-card li::before{content:'✓';color:var(--accent);font-weight:700}
+.price-card .btn{width:100%;justify-content:center;margin-top:8px}
+
+/* CTA */
+.final-cta{padding:100px 0;text-align:center}
+.cta-box{background:var(--bg-card);border-radius:24px;padding:64px 40px;border:1px solid rgba(108,92,231,.1);position:relative;overflow:hidden}
+.cta-box::before{content:'';position:absolute;inset:0;background:var(--gradient);opacity:.04;pointer-events:none}
+.cta-box h2{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;color:var(--text-bright);margin-bottom:16px}
+.cta-box p{color:var(--text-muted);font-size:1.05rem;margin-bottom:32px;max-width:480px;margin-left:auto;margin-right:auto}
+
+/* Footer */
+footer{padding:48px 0 32px;border-top:1px solid rgba(108,92,231,.06)}
+footer .container{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+.footer-links{display:flex;gap:24px}
+.footer-links a{color:var(--text-muted);font-size:.85rem;transition:color .2s}
+.footer-links a:hover{color:var(--text-bright)}
+.footer-copy{color:var(--text-muted);font-size:.8rem}
+
+/* Responsive */
+@media(max-width:768px){
+  .hero .container{grid-template-columns:1fr;text-align:center}
+  .hero p{margin-left:auto;margin-right:auto}
+  .hero-buttons{justify-content:center}
+  .hero-visual{margin-top:40px}
+  .hero-phone{width:220px}
+  .hero-stats{justify-content:center}
+  .nav-links{display:none}
+  .mobile-toggle{display:block}
+  .section-sub{font-size:.95rem}
+  .cta-box{padding:48px 24px}
+}
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav id="nav">
+  <div class="container">
+    <a href="#" class="nav-logo">📚 Semester AI</a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#proof">Reviews</a>
+      <a href="#pricing">Pricing</a>
+      <a href="https://play.google.com/store/apps/details?id=com.semester.ai" class="btn btn-primary nav-cta">Download Free</a>
+    </div>
+    <button class="mobile-toggle" onclick="document.querySelector('.nav-links').style.display=document.querySelector('.nav-links').style.display==='flex'?'none':'flex'" aria-label="Menu">☰</button>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <span class="badge">🎓 Built for African Universities</span>
+      <h1>Study smarter with <span>AI that actually gets it</span></h1>
+      <p>AI tutors, instant PDF summaries, audio notes & smart quizzes — all in one app. Built by students, for students.</p>
+      <div class="hero-buttons">
+        <a href="https://play.google.com/store/apps/details?id=com.semester.ai" class="btn btn-primary">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3.61 1.814L13.793 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734c0-.382.218-.72.61-.92zm.86-.41L16.12 7.28l-2.89 2.89L4.47 1.404zm12.81 4.576L14.39 8.87l2.89 2.89 3.23-1.87c.66-.38.66-1.4 0-1.78l-3.23-1.87-.01-.06zM4.47 22.596l8.76-8.766 2.89 2.89L4.47 22.596z"/></svg>
+          Get on Google Play
+        </a>
+        <a href="#features" class="btn btn-outline">See Features</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><span class="num">10K+</span><span class="label">Students</span></div>
+        <div class="hero-stat"><span class="num">4.7★</span><span class="label">Rating</span></div>
+        <div class="hero-stat"><span class="num">50+</span><span class="label">Universities</span></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <img src="https://raw.githubusercontent.com/sharif-smj/SemesterII/main/screenshots/home_dashboard_onboarding.png" alt="Semester AI Dashboard" class="hero-phone" loading="eager">
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="features" id="features">
+  <div class="container text-center">
+    <span class="badge">Features</span>
+    <h2 class="section-title">Everything you need to ace your semester</h2>
+    <p class="section-sub">From understanding complex topics to revising for exams — Semester AI has you covered.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon icon-tutor">🤖</div>
+        <h3>AI Tutors</h3>
+        <p>Chat with specialized AI tutors that explain concepts in simple language, with examples relevant to your course.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon icon-pdf">📄</div>
+        <h3>PDF Summaries</h3>
+        <p>Drop any lecture PDF and get an instant, clear summary. Highlight, ask questions, and dive deeper on any section.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon icon-audio">🎧</div>
+        <h3>Audio Notes</h3>
+        <p>Turn any document into audio you can listen to on the go — in matatus, walking to class, or at the gym.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon icon-quiz">🧠</div>
+        <h3>Smart Quizzes</h3>
+        <p>AI generates quizzes from your materials — multiple choice, true/false, and open-ended. Test yourself before the exam tests you.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon icon-course">📋</div>
+        <h3>Course Management</h3>
+        <p>Organize by university, course, and unit. Everything in one place — notes, PDFs, quizzes, all linked together.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon icon-camera">📸</div>
+        <h3>Camera Assistant</h3>
+        <p>Point your camera at a problem, whiteboard, or textbook page — AI reads and explains it instantly.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Screenshots Scroll -->
+<section class="screenshots">
+  <div class="screenshots-scroll" id="scroll-track">
+    <img src="https://raw.githubusercontent.com/sharif-smj/SemesterII/main/screenshots/home_dashboard_onboarding.png" alt="Dashboard" loading="lazy">
+    <img src="https://raw.githubusercontent.com/sharif-smj/SemesterII/main/screenshots/ai_tutor_welcome_dialog.png" alt="AI Tutor" loading="lazy">
+    <img src="https://raw.githubusercontent.com/sharif-smj/SemesterII/main/screenshots/pdf_reader_ai_menu.png" alt="PDF Reader" loading="lazy">
+    <img src="https://raw.githubusercontent.com/sharif-smj/SemesterII/main/screenshots/pdf_summary_result_dialog.png" alt="PDF Summary" loading="lazy">
+    <img src="https://raw.githubusercontent.com/sharif-smj/SemesterII/main/screenshots/course_details_engineering_math.png" alt="Course Details" loading="lazy">
+    <img src="https://raw.githubusercontent.com/sharif-smj/SemesterII/main/screenshots/sign_in_screen.png" alt="Sign In" loading="lazy">
+    <img src="https://raw.githubusercontent.com/sharif-smj/SemesterII/main/screenshots/onboarding_study_resources.png" alt="Onboarding" loading="lazy">
+    <!-- duplicated for infinite scroll effect -->
+    <img src="https://raw.githubusercontent.com/sharif-smj/SemesterII/main/screenshots/home_dashboard_onboarding.png" alt="Dashboard" loading="lazy">
+    <img src="https://raw.githubusercontent.com/sharif-smj/SemesterII/main/screenshots/ai_tutor_welcome_dialog.png" alt="AI Tutor" loading="lazy">
+    <img src="https://raw.githubusercontent.com/sharif-smj/SemesterII/main/screenshots/pdf_reader_ai_menu.png" alt="PDF Reader" loading="lazy">
+    <img src="https://raw.githubusercontent.com/sharif-smj/SemesterII/main/screenshots/pdf_summary_result_dialog.png" alt="PDF Summary" loading="lazy">
+    <img src="https://raw.githubusercontent.com/sharif-smj/SemesterII/main/screenshots/course_details_engineering_math.png" alt="Course Details" loading="lazy">
+    <img src="https://raw.githubusercontent.com/sharif-smj/SemesterII/main/screenshots/sign_in_screen.png" alt="Sign In" loading="lazy">
+    <img src="https://raw.githubusercontent.com/sharif-smj/SemesterII/main/screenshots/onboarding_study_resources.png" alt="Onboarding" loading="lazy">
+  </div>
+</section>
+
+<!-- Social Proof -->
+<section class="social-proof" id="proof">
+  <div class="container text-center">
+    <span class="badge">Loved by Students</span>
+    <h2 class="section-title">Join thousands already studying smarter</h2>
+    <p class="section-sub">Real students, real results.</p>
+    <div class="stats-row">
+      <div class="stat-card"><div class="number">500K+</div><div class="desc">Summaries Generated</div></div>
+      <div class="stat-card"><div class="number">2M+</div><div class="desc">Quiz Questions Answered</div></div>
+      <div class="stat-card"><div class="number">98%</div><div class="desc">Say It Helped Their Grades</div></div>
+    </div>
+    <div class="reviews">
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <blockquote>"I used to spend 3 hours reading one chapter. Now I get the summary in 30 seconds and actually understand it. My GPA went from 3.2 to 3.8."</blockquote>
+        <div class="review-author">
+          <div class="review-avatar">AN</div>
+          <div><div class="review-name">Amina N.</div><div class="review-uni">Makerere University, Uganda</div></div>
+        </div>
+      </div>
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <blockquote>"The audio notes feature is a game-changer. I listen to my notes in the matatu on the way to campus. That's free study time I never had before."</blockquote>
+        <div class="review-author">
+          <div class="review-avatar">JK</div>
+          <div><div class="review-name">James K.</div><div class="review-uni">University of Nairobi, Kenya</div></div>
+        </div>
+      </div>
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <blockquote>"The quizzes are exactly like what comes in exams. It's like the AI knows my lecturer. Seriously, this app is a must-have."</blockquote>
+        <div class="review-author">
+          <div class="review-avatar">FO</div>
+          <div><div class="review-name">Fatima O.</div><div class="review-uni">University of Lagos, Nigeria</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing -->
+<section class="pricing" id="pricing">
+  <div class="container text-center">
+    <span class="badge">Pricing</span>
+    <h2 class="section-title">Start free. Upgrade when you're hooked.</h2>
+    <p class="section-sub">No credit card needed. No hidden fees. Just better grades.</p>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <h3>Free</h3>
+        <div class="price-amount">$0 <small>/forever</small></div>
+        <ul>
+          <li>3 AI tutor chats / day</li>
+          <li>5 PDF summaries / week</li>
+          <li>Basic quizzes</li>
+          <li>Audio notes (limited)</li>
+          <li>Course organization</li>
+        </ul>
+        <a href="https://play.google.com/store/apps/details?id=com.semester.ai" class="btn btn-outline">Get Started Free</a>
+      </div>
+      <div class="price-card popular">
+        <h3>Pro</h3>
+        <div class="price-amount">$3 <small>/month</small></div>
+        <ul>
+          <li>Unlimited AI tutor chats</li>
+          <li>Unlimited PDF summaries</li>
+          <li>All quiz types</li>
+          <li>Unlimited audio notes</li>
+          <li>Camera assistant</li>
+          <li>No ads</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="https://play.google.com/store/apps/details?id=com.semester.ai" class="btn btn-primary">Start Free Trial</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Final CTA -->
+<section class="final-cta">
+  <div class="container">
+    <div class="cta-box">
+      <h2>Your next exam is coming.<br>Are you ready?</h2>
+      <p>Download Semester AI now and start studying smarter today. It's free.</p>
+      <a href="https://play.google.com/store/apps/details?id=com.semester.ai" class="btn btn-primary">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3.61 1.814L13.793 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734c0-.382.218-.72.61-.92zm.86-.41L16.12 7.28l-2.89 2.89L4.47 1.404zm12.81 4.576L14.39 8.87l2.89 2.89 3.23-1.87c.66-.38.66-1.4 0-1.78l-3.23-1.87-.01-.06zM4.47 22.596l8.76-8.766 2.89 2.89L4.47 22.596z"/></svg>
+        Download on Google Play
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+    <span class="nav-logo">📚 Semester AI</span>
+    <div class="footer-links">
+      <a href="mailto:support@semesterai.com">Contact</a>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms</a>
+      <a href="https://twitter.com/semesterai">Twitter</a>
+    </div>
+    <div class="footer-copy">© 2026 Semester AI. Made with ❤️ in Kampala.</div>
+  </div>
+</footer>
+
+<script>
+// Nav scroll effect
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').classList.toggle('scrolled',window.scrollY>50)
+})
+</script>
+</body>
+</html>
