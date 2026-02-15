@@ -4,500 +4,406 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Semester AI — Your Documents, Brought to Life</title>
-<meta name="description" content="Turn any PDF into a personalized learning universe powered by AI. Expert tutors, presentations, quizzes — all from your documents.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<meta name="description" content="Transform your PDFs into AI tutors, summaries, presentations, quizzes and more. Study smarter with Semester AI.">
+<link rel="icon" href="assets/semester_logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
---bg:#000811;--bg2:#001018;--bg3:#001a22;--border:#1a3a3d;
---text:#E0E3E1;--text2:#9aafad;--text3:#5d7a78;
---accent:#54DBC9;--accent2:#90CDFF;--accent3:#045E55;
---green:#54DBC9;--blue:#90CDFF;--orange:#D4AF37;--pink:#EE465F;
---seed:#179F90;--secondary:#2B4B4D;
---radius:16px;--radius-sm:10px;
+--bg:#000811;--primary:#54DBC9;--seed:#179F90;--container:#045E55;
+--secondary:#2B4B4D;--tertiary:#90CDFF;--text:#E0E3E1;--gold:#D4AF37;
+--cta:rgb(238,70,95);--surface:#0a1420;--surface2:#111d2b;
 }
-html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
-body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;line-height:1.6}
 a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+
+/* Utility */
 .container{max-width:1200px;margin:0 auto;padding:0 24px}
+.section{padding:100px 0}
+.fade-up{opacity:0;transform:translateY(40px);transition:opacity .7s ease,transform .7s ease}
+.fade-up.visible{opacity:1;transform:translateY(0)}
+
+/* Glow blob */
+.glow{position:fixed;width:600px;height:600px;border-radius:50%;pointer-events:none;z-index:0;filter:blur(180px);opacity:.12}
+.glow-1{top:-200px;left:-100px;background:var(--primary)}
+.glow-2{bottom:-200px;right:-100px;background:var(--tertiary)}
 
 /* Nav */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;backdrop-filter:blur(20px);background:rgba(0,8,17,.85);border-bottom:1px solid rgba(26,58,61,.5)}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;backdrop-filter:blur(20px);background:rgba(0,8,17,.7);border-bottom:1px solid rgba(84,219,201,.08)}
 nav .container{display:flex;align-items:center;justify-content:space-between;height:64px}
-.nav-logo{font-weight:800;font-size:1.25rem;display:flex;align-items:center;gap:8px}
-.nav-logo span{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.nav-links{display:flex;gap:32px;align-items:center}
-.nav-links a{font-size:.875rem;color:var(--text2);transition:color .2s}
-.nav-links a:hover{color:var(--text)}
-.nav-cta{background:var(--accent);color:#000811;padding:8px 20px;border-radius:8px;font-weight:600;font-size:.875rem;transition:all .2s}
-.nav-cta:hover{background:var(--accent2);transform:translateY(-1px)}
-@media(max-width:768px){.nav-links{display:none}}
+nav img{height:32px}
+.nav-links{display:flex;gap:32px;align-items:center;font-size:.875rem;font-weight:500}
+.nav-links a{opacity:.7;transition:opacity .2s}
+.nav-links a:hover{opacity:1;color:var(--primary)}
+.nav-cta{background:var(--cta);color:#fff;padding:8px 20px;border-radius:100px;font-weight:600;font-size:.875rem;opacity:1!important;transition:transform .2s,box-shadow .2s}
+.nav-cta:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(238,70,95,.4)}
 
 /* Hero */
-.hero{position:relative;padding:160px 0 120px;text-align:center;overflow:hidden}
-.hero-glow{position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:800px;height:800px;background:radial-gradient(ellipse,rgba(84,219,201,.12),rgba(4,94,85,.1),transparent 70%);pointer-events:none;animation:glow-pulse 8s ease-in-out infinite}
-@keyframes glow-pulse{0%,100%{opacity:.6;transform:translateX(-50%) scale(1)}50%{opacity:1;transform:translateX(-50%) scale(1.1)}}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:999px;border:1px solid var(--border);background:var(--bg2);font-size:.8rem;color:var(--text2);margin-bottom:24px}
-.hero-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:blink 2s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-.hero h1{font-size:clamp(2.5rem,6vw,4.5rem);font-weight:900;line-height:1.08;letter-spacing:-.03em;margin-bottom:24px;position:relative}
-.hero h1 .grad{background:linear-gradient(135deg,var(--accent),var(--accent2),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-size:200% 200%;animation:grad-shift 6s ease infinite}
-@keyframes grad-shift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
-.hero p{font-size:clamp(1.05rem,2vw,1.25rem);color:var(--text2);max-width:600px;margin:0 auto 40px;line-height:1.7}
-.hero-buttons{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
-.btn-primary{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,var(--accent),var(--seed));color:#000811;padding:14px 32px;border-radius:12px;font-weight:700;font-size:1rem;transition:all .3s;box-shadow:0 0 40px rgba(84,219,201,.25)}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 0 60px rgba(84,219,201,.4)}
-.btn-secondary{display:inline-flex;align-items:center;gap:10px;border:1px solid var(--border);color:var(--text);padding:14px 32px;border-radius:12px;font-weight:600;font-size:1rem;transition:all .3s;background:var(--bg2)}
-.btn-secondary:hover{border-color:var(--text3);transform:translateY(-2px)}
-.play-icon{width:20px;height:20px}
-
-/* Phone Mockups */
-.hero-phones{display:flex;justify-content:center;gap:20px;margin-top:80px;perspective:1000px;position:relative}
-.phone-frame{width:220px;height:440px;border-radius:28px;background:linear-gradient(145deg,var(--bg3),var(--bg2));border:1px solid var(--border);overflow:hidden;position:relative;box-shadow:0 40px 80px rgba(0,0,0,.5);transition:transform .5s}
-.phone-frame:nth-child(1){transform:rotateY(8deg) translateZ(-20px)}
-.phone-frame:nth-child(2){transform:scale(1.08) translateZ(20px);z-index:2}
-.phone-frame:nth-child(3){transform:rotateY(-8deg) translateZ(-20px)}
-.phone-inner{width:100%;height:100%;background:linear-gradient(180deg,rgba(84,219,201,.1),rgba(4,94,85,.08),var(--bg));display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center}
-.phone-inner .phone-icon{font-size:3rem;margin-bottom:12px}
-.phone-inner .phone-label{font-size:.75rem;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:.05em}
-@media(max-width:640px){.hero-phones{gap:8px}.phone-frame{width:140px;height:280px;border-radius:20px}.phone-frame:nth-child(1),.phone-frame:nth-child(3){display:none}}
+.hero{padding:140px 0 80px;text-align:center;position:relative}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(84,219,201,.1);border:1px solid rgba(84,219,201,.2);border-radius:100px;padding:6px 16px;font-size:.8rem;color:var(--primary);margin-bottom:24px;font-weight:500}
+.hero-badge img{height:16px}
+.hero h1{font-size:clamp(2.5rem,6vw,4.5rem);font-weight:800;line-height:1.1;letter-spacing:-.03em;margin-bottom:20px;background:linear-gradient(135deg,#fff 0%,var(--primary) 50%,var(--tertiary) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:clamp(1rem,2vw,1.25rem);max-width:560px;margin:0 auto 40px;opacity:.7;line-height:1.7}
+.cta-group{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:60px}
+.btn-primary{display:inline-flex;align-items:center;gap:10px;background:var(--cta);color:#fff;padding:14px 32px;border-radius:100px;font-weight:600;font-size:1rem;transition:all .2s;border:none;cursor:pointer}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(238,70,95,.4)}
+.btn-primary svg{width:20px;height:20px}
+.btn-secondary{display:inline-flex;align-items:center;gap:10px;background:transparent;color:var(--text);padding:14px 32px;border-radius:100px;font-weight:600;font-size:1rem;border:1px solid rgba(255,255,255,.15);transition:all .2s;cursor:pointer}
+.btn-secondary:hover{border-color:var(--primary);color:var(--primary)}
+.hero-screens{display:flex;justify-content:center;gap:20px;max-width:900px;margin:0 auto;perspective:1000px}
+.hero-screens img{width:220px;border-radius:24px;box-shadow:0 20px 60px rgba(0,0,0,.5);transition:transform .4s}
+.hero-screens img:nth-child(1){transform:rotateY(8deg) translateZ(-20px)}
+.hero-screens img:nth-child(3){transform:rotateY(-8deg) translateZ(-20px)}
+.hero-screens img:hover{transform:translateY(-8px) scale(1.02)!important}
 
 /* Stats */
-.stats{padding:60px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-.stats .container{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;text-align:center}
-.stat-num{font-size:2.5rem;font-weight:900;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.stat-label{font-size:.85rem;color:var(--text3);margin-top:4px}
-@media(max-width:640px){.stats .container{grid-template-columns:repeat(2,1fr);gap:24px}.stat-num{font-size:1.8rem}}
-
-/* Section shared */
-section{padding:120px 0}
-.section-tag{display:inline-block;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);margin-bottom:16px;padding:4px 12px;border-radius:6px;background:rgba(84,219,201,.08);border:1px solid rgba(84,219,201,.2)}
-.section-title{font-size:clamp(2rem,4vw,3rem);font-weight:800;letter-spacing:-.025em;margin-bottom:16px;line-height:1.15}
-.section-sub{font-size:1.1rem;color:var(--text2);max-width:600px;line-height:1.7}
-.section-header{margin-bottom:64px}
-
-/* Magic Section */
-.magic{background:var(--bg)}
-.magic-flow{display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap;margin-top:48px}
-.magic-step{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:32px;text-align:center;width:240px;position:relative;transition:all .4s}
-.magic-step:hover{border-color:var(--accent);transform:translateY(-4px);box-shadow:0 20px 40px rgba(84,219,201,.08)}
-.magic-step .step-icon{font-size:3rem;margin-bottom:16px}
-.magic-step h3{font-weight:700;font-size:1.1rem;margin-bottom:8px}
-.magic-step p{font-size:.85rem;color:var(--text3);line-height:1.5}
-.magic-arrow{font-size:1.5rem;color:var(--text3)}
-@media(max-width:768px){.magic-arrow{display:none}.magic-step{width:100%;max-width:320px}}
+.stats{border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02);padding:40px 0}
+.stats .container{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;text-align:center}
+.stat-num{font-size:clamp(1.5rem,3vw,2.25rem);font-weight:800;color:var(--primary)}
+.stat-label{font-size:.85rem;opacity:.5;margin-top:4px}
 
 /* Features */
-.features{background:var(--bg2)}
-.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.feature-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:32px;transition:all .4s}
-.feature-card:hover{border-color:var(--accent);transform:translateY(-4px);box-shadow:0 20px 40px rgba(84,219,201,.06)}
-.feature-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:20px}
-.feature-card h3{font-weight:700;font-size:1.05rem;margin-bottom:8px}
-.feature-card p{font-size:.88rem;color:var(--text3);line-height:1.6}
-.fi-purple{background:rgba(84,219,201,.1)}
-.fi-blue{background:rgba(144,205,255,.1)}
-.fi-green{background:rgba(84,219,201,.1)}
-.fi-pink{background:rgba(238,70,95,.1)}
-.fi-orange{background:rgba(212,175,55,.1)}
-.fi-cyan{background:rgba(144,205,255,.1)}
-@media(max-width:768px){.features-grid{grid-template-columns:1fr}}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:20px}
+.feature-card{background:linear-gradient(135deg,rgba(255,255,255,.03),rgba(255,255,255,.01));border:1px solid rgba(255,255,255,.06);border-radius:20px;padding:36px;transition:all .3s;position:relative;overflow:hidden}
+.feature-card:hover{border-color:rgba(84,219,201,.2);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.3)}
+.feature-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--primary),transparent);opacity:0;transition:opacity .3s}
+.feature-card:hover::before{opacity:.6}
+.feature-icon{width:56px;height:56px;border-radius:16px;background:rgba(84,219,201,.1);display:flex;align-items:center;justify-content:center;margin-bottom:20px}
+.feature-icon img{width:32px;height:32px;object-fit:contain}
+.feature-card h3{font-size:1.15rem;font-weight:700;margin-bottom:8px}
+.feature-card p{font-size:.9rem;opacity:.6;line-height:1.6}
+.feature-card .feature-img{width:100%;border-radius:12px;margin-top:20px;opacity:.85}
 
-/* How it works */
-.how{background:var(--bg)}
-.how-steps{display:flex;flex-direction:column;gap:0;position:relative;max-width:640px;margin:0 auto}
-.how-step{display:flex;gap:24px;align-items:flex-start;position:relative;padding:32px 0}
-.how-num{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--seed));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;flex-shrink:0;position:relative;z-index:2;color:#000811}
-.how-step:not(:last-child)::after{content:'';position:absolute;left:47px;top:80px;width:2px;height:calc(100% - 48px);background:linear-gradient(180deg,var(--seed),transparent)}
-.how-content h3{font-weight:700;font-size:1.15rem;margin-bottom:6px}
-.how-content p{font-size:.9rem;color:var(--text3);line-height:1.6}
+.section-label{text-transform:uppercase;font-size:.75rem;font-weight:600;letter-spacing:.15em;color:var(--primary);margin-bottom:12px}
+.section-title{font-size:clamp(1.75rem,4vw,2.75rem);font-weight:800;letter-spacing:-.02em;margin-bottom:16px}
+.section-sub{opacity:.5;max-width:560px;margin-bottom:48px;font-size:1.05rem}
 
-/* Coming Soon */
-.coming{background:var(--bg2);position:relative;overflow:hidden}
-.coming::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 80% 20%,rgba(84,219,201,.05),transparent 50%);pointer-events:none}
-.coming-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
-.coming-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:24px;display:flex;gap:16px;align-items:flex-start;transition:all .3s}
-.coming-card:hover{border-color:rgba(84,219,201,.3)}
-.coming-card .cc-icon{font-size:1.8rem;flex-shrink:0}
-.coming-card h4{font-weight:700;font-size:.95rem;margin-bottom:4px}
-.coming-card p{font-size:.82rem;color:var(--text3);line-height:1.5}
-.coming-card .cc-badge{display:inline-block;font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:4px;background:rgba(84,219,201,.1);color:var(--accent);margin-top:6px}
-@media(max-width:640px){.coming-grid{grid-template-columns:1fr}}
-
-/* Pricing */
-.pricing{background:var(--bg)}
-.pricing-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;max-width:800px;margin:0 auto}
-.price-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:40px;position:relative;transition:all .4s}
-.price-card.featured{border-color:var(--accent);box-shadow:0 0 60px rgba(84,219,201,.1)}
-.price-card.featured::before{content:'MOST POPULAR';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--accent),var(--seed));color:#000811;font-size:.7rem;font-weight:800;padding:4px 16px;border-radius:999px;letter-spacing:.05em}
-.price-name{font-weight:700;font-size:1.1rem;margin-bottom:8px}
-.price-amount{font-size:3rem;font-weight:900;margin-bottom:4px}
-.price-amount span{font-size:1rem;color:var(--text3);font-weight:500}
-.price-desc{font-size:.85rem;color:var(--text3);margin-bottom:24px}
-.price-features{list-style:none;margin-bottom:32px}
-.price-features li{font-size:.88rem;padding:8px 0;border-bottom:1px solid rgba(39,39,42,.5);display:flex;align-items:center;gap:8px;color:var(--text2)}
-.price-features li::before{content:'✓';color:var(--green);font-weight:700}
-.price-btn{display:block;text-align:center;padding:14px;border-radius:10px;font-weight:700;font-size:.95rem;transition:all .3s}
-.price-btn-outline{border:1px solid var(--border);color:var(--text)}
-.price-btn-outline:hover{border-color:var(--text3)}
-.price-btn-fill{background:linear-gradient(135deg,var(--accent),var(--seed));color:#000811}
-.price-btn-fill:hover{box-shadow:0 0 30px rgba(84,219,201,.4)}
-@media(max-width:640px){.pricing-grid{grid-template-columns:1fr}}
+/* Carousel */
+.carousel-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:20px 0}
+.carousel-wrap::-webkit-scrollbar{display:none}
+.carousel-track{display:flex;gap:20px;padding:0 24px;width:max-content}
+.carousel-track img{height:500px;border-radius:20px;box-shadow:0 12px 40px rgba(0,0,0,.4);flex-shrink:0;transition:transform .3s}
+.carousel-track img:hover{transform:scale(1.03)}
 
 /* Testimonials */
-.testimonials{background:var(--bg2)}
-.test-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.test-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:28px}
-.test-stars{color:#D4AF37;font-size:.9rem;margin-bottom:12px}
-.test-text{font-size:.9rem;color:var(--text2);line-height:1.6;margin-bottom:16px;font-style:italic}
-.test-author{display:flex;align-items:center;gap:12px}
-.test-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--seed));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;color:#000811}
-.test-name{font-weight:600;font-size:.85rem}
-.test-uni{font-size:.75rem;color:var(--text3)}
-@media(max-width:768px){.test-grid{grid-template-columns:1fr}}
+.testimonials-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.testimonial{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:20px;padding:32px}
+.testimonial .stars{color:var(--gold);font-size:1rem;margin-bottom:16px}
+.testimonial blockquote{font-size:.95rem;line-height:1.7;opacity:.8;margin-bottom:20px;font-style:italic}
+.testimonial .author{display:flex;align-items:center;gap:12px}
+.testimonial .avatar{width:40px;height:40px;border-radius:50%;background:var(--container);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;color:var(--primary)}
+.testimonial .name{font-weight:600;font-size:.9rem}
+.testimonial .school{font-size:.8rem;opacity:.4}
+
+/* Coming Soon */
+.coming-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.coming-card{background:linear-gradient(135deg,rgba(144,205,255,.05),rgba(84,219,201,.03));border:1px solid rgba(144,205,255,.1);border-radius:20px;padding:32px;text-align:center}
+.coming-card .emoji{font-size:2.5rem;margin-bottom:16px}
+.coming-card h3{font-size:1.1rem;font-weight:700;margin-bottom:8px;color:var(--tertiary)}
+.coming-card p{font-size:.875rem;opacity:.5;line-height:1.6}
+
+/* Pricing */
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;max-width:720px;margin:0 auto}
+.price-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:24px;padding:40px 32px;position:relative}
+.price-card.popular{border-color:var(--primary);background:linear-gradient(135deg,rgba(84,219,201,.08),rgba(84,219,201,.02))}
+.price-card.popular::before{content:'MOST POPULAR';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--primary);color:var(--bg);font-size:.7rem;font-weight:700;padding:4px 16px;border-radius:100px;letter-spacing:.1em}
+.price-name{font-size:1rem;font-weight:600;opacity:.6;margin-bottom:8px}
+.price-amount{font-size:3rem;font-weight:800;margin-bottom:4px}
+.price-amount span{font-size:1rem;font-weight:500;opacity:.5}
+.price-desc{font-size:.85rem;opacity:.4;margin-bottom:28px}
+.price-features{list-style:none;margin-bottom:32px}
+.price-features li{padding:8px 0;font-size:.9rem;opacity:.7;display:flex;align-items:center;gap:10px}
+.price-features li::before{content:'✓';color:var(--primary);font-weight:700}
+.price-btn{display:block;text-align:center;padding:14px;border-radius:100px;font-weight:600;font-size:.95rem;transition:all .2s;cursor:pointer;border:none;width:100%}
+.price-btn-outline{background:transparent;border:1px solid rgba(255,255,255,.15);color:var(--text)}
+.price-btn-outline:hover{border-color:var(--primary);color:var(--primary)}
+.price-btn-fill{background:var(--cta);color:#fff}
+.price-btn-fill:hover{box-shadow:0 8px 30px rgba(238,70,95,.4);transform:translateY(-2px)}
 
 /* Final CTA */
-.final-cta{background:var(--bg);text-align:center;padding:120px 0;position:relative;overflow:hidden}
-.final-cta::before{content:'';position:absolute;bottom:-100px;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(ellipse,rgba(84,219,201,.08),transparent 70%);pointer-events:none}
-.final-cta h2{font-size:clamp(2rem,4vw,3.2rem);font-weight:900;margin-bottom:16px;letter-spacing:-.025em}
-.final-cta p{color:var(--text2);max-width:500px;margin:0 auto 40px;font-size:1.05rem}
+.final-cta{text-align:center;padding:100px 0;background:radial-gradient(ellipse at center,rgba(84,219,201,.06) 0%,transparent 70%)}
+.final-cta h2{font-size:clamp(2rem,4vw,3rem);font-weight:800;letter-spacing:-.02em;margin-bottom:16px}
+.final-cta p{opacity:.5;margin-bottom:40px;font-size:1.05rem}
 
 /* Footer */
-footer{border-top:1px solid var(--border);padding:40px 0;text-align:center}
-footer p{font-size:.8rem;color:var(--text3)}
+footer{border-top:1px solid rgba(255,255,255,.06);padding:40px 0}
+footer .container{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px}
+footer img{height:28px;opacity:.6}
+footer .links{display:flex;gap:24px;font-size:.85rem;opacity:.4}
+footer .copy{font-size:.8rem;opacity:.3}
 
-/* Animations */
-.reveal{opacity:0;transform:translateY(30px);transition:all .7s cubic-bezier(.16,1,.3,1)}
-.reveal.visible{opacity:1;transform:translateY(0)}
-.reveal-delay-1{transition-delay:.1s}
-.reveal-delay-2{transition-delay:.2s}
-.reveal-delay-3{transition-delay:.3s}
-.reveal-delay-4{transition-delay:.4s}
+@media(max-width:768px){
+  .nav-links a:not(.nav-cta){display:none}
+  .hero-screens{gap:12px}
+  .hero-screens img{width:140px;border-radius:16px}
+  .stats .container{grid-template-columns:repeat(2,1fr)}
+  .features-grid{grid-template-columns:1fr}
+  .carousel-track img{height:360px}
+  .pricing-grid{grid-template-columns:1fr}
+  footer .container{flex-direction:column;text-align:center}
+}
 </style>
 </head>
 <body>
 
+<div class="glow glow-1"></div>
+<div class="glow glow-2"></div>
+
 <!-- Nav -->
 <nav>
 <div class="container">
-<a href="#" class="nav-logo">🎓 <span>Semester AI</span></a>
-<div class="nav-links">
-<a href="#features">Features</a>
-<a href="#how">How It Works</a>
-<a href="#pricing">Pricing</a>
-<a href="#" class="nav-cta">Get the App</a>
-</div>
+  <img src="assets/semester_logo.png" alt="Semester AI">
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#pricing">Pricing</a>
+    <a href="https://play.google.com/store/apps/details?id=com.axelc.semester" class="nav-cta">Get the App</a>
+  </div>
 </div>
 </nav>
 
 <!-- Hero -->
 <section class="hero">
-<div class="hero-glow"></div>
 <div class="container">
-<div class="hero-badge"><span class="dot"></span> Now available on Android</div>
-<h1>Your documents,<br><span class="grad">brought to life</span></h1>
-<p>Turn any PDF into a personalized learning universe. AI tutors, interactive presentations, quizzes, and more — all generated from your study materials.</p>
-<div class="hero-buttons">
-<a href="#" class="btn-primary">
-<svg class="play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15C4.34,1.91 4.93,1.97 5.37,2.31L15.45,10.31C15.81,10.59 16,11.03 16,11.5C16,11.97 15.81,12.41 15.45,12.69L5.37,20.69C5.09,20.9 4.75,21 4.41,21C4.22,21 4.03,20.97 3.84,20.85C3.34,20.61 3,20.09 3,19.5V20.5ZM20,3V21H18V3H20Z"/></svg>
-Google Play
-</a>
-<a href="#how" class="btn-secondary">See how it works →</a>
-</div>
-<div class="hero-phones">
-<div class="phone-frame reveal"><div class="phone-inner"><div class="phone-icon">🤖</div><div class="phone-label">AI Tutors</div></div></div>
-<div class="phone-frame reveal reveal-delay-1"><div class="phone-inner"><div class="phone-icon">📄</div><div class="phone-label">Smart PDF Reader</div></div></div>
-<div class="phone-frame reveal reveal-delay-2"><div class="phone-inner"><div class="phone-icon">🎬</div><div class="phone-label">Presentations</div></div></div>
-</div>
+  <div class="hero-badge fade-up"><img src="assets/sparkles.png" alt="">AI-Powered Study Companion</div>
+  <h1 class="fade-up">Your documents,<br>brought to life</h1>
+  <p class="fade-up">Upload any PDF and instantly get AI tutors, summaries, presentations, quizzes and flashcards — everything you need to ace your exams.</p>
+  <div class="cta-group fade-up">
+    <a href="https://play.google.com/store/apps/details?id=com.axelc.semester" class="btn-primary">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 01-.61-.92V2.734a1 1 0 01.609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.199l2.302 2.302a1 1 0 010 1.38l-2.302 2.302L15.396 13l2.302-2.492zM5.864 2.658L16.8 8.99l-2.302 2.302-8.634-8.634z"/></svg>
+      Download on Google Play
+    </a>
+  </div>
+  <div class="hero-screens fade-up">
+    <img src="assets/screen_v2_1.png" alt="Semester AI Screenshot">
+    <img src="assets/screen_v2_2.png" alt="Semester AI Screenshot">
+    <img src="assets/screen_v2_3.png" alt="Semester AI Screenshot">
+  </div>
 </div>
 </section>
 
 <!-- Stats -->
-<div class="stats">
+<section class="stats fade-up">
 <div class="container">
-<div class="reveal"><div class="stat-num">10K+</div><div class="stat-label">Documents processed</div></div>
-<div class="reveal reveal-delay-1"><div class="stat-num">5K+</div><div class="stat-label">Active students</div></div>
-<div class="reveal reveal-delay-2"><div class="stat-num">50+</div><div class="stat-label">Universities</div></div>
-<div class="reveal reveal-delay-3"><div class="stat-num">4.8★</div><div class="stat-label">App rating</div></div>
-</div>
-</div>
-
-<!-- The Magic -->
-<section class="magic" id="magic">
-<div class="container">
-<div class="section-header reveal">
-<span class="section-tag">✨ The Magic</span>
-<h2 class="section-title">Upload a PDF. Watch experts appear.</h2>
-<p class="section-sub">Your documents aren't just files — they're gateways. Semester AI analyzes your content and summons the perfect AI tutors to guide you through it.</p>
-</div>
-<div class="magic-flow">
-<div class="magic-step reveal">
-<div class="step-icon">📄</div>
-<h3>Upload Your PDF</h3>
-<p>Any lecture note, textbook chapter, or study material</p>
-</div>
-<div class="magic-arrow reveal">→</div>
-<div class="magic-step reveal reveal-delay-1">
-<div class="step-icon">🧠</div>
-<h3>AI Analyzes Content</h3>
-<p>Understands topics, concepts, and the best way to teach them</p>
-</div>
-<div class="magic-arrow reveal">→</div>
-<div class="magic-step reveal reveal-delay-2">
-<div class="step-icon">👨‍🔬</div>
-<h3>Expert Tutors Appear</h3>
-<p>Einstein for physics, Curie for chemistry — each with their own voice</p>
-</div>
-<div class="magic-arrow reveal">→</div>
-<div class="magic-step reveal reveal-delay-3">
-<div class="step-icon">🚀</div>
-<h3>Learn Your Way</h3>
-<p>Chat, quizzes, presentations, flashcards — all personalized</p>
-</div>
-</div>
+  <div><div class="stat-num">10K+</div><div class="stat-label">Documents Processed</div></div>
+  <div><div class="stat-num">5K+</div><div class="stat-label">Students</div></div>
+  <div><div class="stat-num">50+</div><div class="stat-label">Universities</div></div>
+  <div><div class="stat-num">4.8★</div><div class="stat-label">App Store Rating</div></div>
 </div>
 </section>
 
 <!-- Features -->
-<section class="features" id="features">
+<section class="section" id="features">
 <div class="container">
-<div class="section-header reveal">
-<span class="section-tag">Features</span>
-<h2 class="section-title">Everything you need to master your courses</h2>
-<p class="section-sub">A complete AI learning toolkit designed for university students.</p>
-</div>
-<div class="features-grid">
-<div class="feature-card reveal">
-<div class="feature-icon fi-purple">🎓</div>
-<h3>AI Expert Tutors</h3>
-<p>Pre-built expert personas like Einstein, Feynman, and Curie — each with unique teaching styles and text-to-speech voices that bring learning to life.</p>
-</div>
-<div class="feature-card reveal reveal-delay-1">
-<div class="feature-icon fi-blue">📖</div>
-<h3>Smart PDF Reader</h3>
-<p>Upload any PDF and chat with it. Get instant summaries, explanations, and answers to your questions — powered by AI that understands your document.</p>
-</div>
-<div class="feature-card reveal reveal-delay-2">
-<div class="feature-icon fi-pink">🎬</div>
-<h3>Presentation Mode</h3>
-<p>Transform any PDF into a narrated, interactive presentation. Perfect for revision or teaching others — your document becomes a slideshow with AI narration.</p>
-</div>
-<div class="feature-card reveal reveal-delay-3">
-<div class="feature-icon fi-green">🧩</div>
-<h3>Flashcards & Quizzes</h3>
-<p>Auto-generated MCQs, True/False, and open-ended questions from your material. Flashcards for spaced repetition. Test yourself before exams test you.</p>
-</div>
-<div class="feature-card reveal reveal-delay-4">
-<div class="feature-icon fi-orange">🎨</div>
-<h3>AI Image Generation</h3>
-<p>Generate visual explanations, diagrams, and illustrations with DALL-E 3. Turn abstract concepts into images you'll remember.</p>
-</div>
-<div class="feature-card reveal">
-<div class="feature-icon fi-cyan">📸</div>
-<h3>Camera Assistant</h3>
-<p>Snap a photo of a problem, diagram, or whiteboard — and get instant AI analysis and explanations. Point, shoot, understand.</p>
-</div>
-</div>
+  <div class="section-label fade-up">Features</div>
+  <div class="section-title fade-up">Everything you need to study smarter</div>
+  <p class="section-sub fade-up">One app. Every tool. From understanding to mastery.</p>
+  <div class="features-grid">
+    <div class="feature-card fade-up">
+      <div class="feature-icon"><img src="assets/onboarding_tutors.png" alt="AI Tutors"></div>
+      <h3>AI Tutors</h3>
+      <p>Chat with an AI that knows your documents inside out. Ask questions, get explanations, and learn at your own pace.</p>
+      <img class="feature-img" src="assets/onboarding_tutors.png" alt="AI Tutors">
+    </div>
+    <div class="feature-card fade-up">
+      <div class="feature-icon"><img src="assets/explain_book.png" alt="PDF Summaries"></div>
+      <h3>PDF Summaries</h3>
+      <p>Get clear, concise summaries of any document in seconds. Focus on what matters and skip the fluff.</p>
+    </div>
+    <div class="feature-card fade-up">
+      <div class="feature-icon"><img src="assets/onboarding_presentations.png" alt="Presentations"></div>
+      <h3>Presentations</h3>
+      <p>Turn your notes into beautiful, ready-to-present slide decks automatically. Impress your class effortlessly.</p>
+      <img class="feature-img" src="assets/screen_v2_pres.png" alt="Presentation mode">
+    </div>
+    <div class="feature-card fade-up">
+      <div class="feature-icon"><img src="assets/onboarding_games.png" alt="Quizzes"></div>
+      <h3>Quizzes & Flashcards</h3>
+      <p>Test your knowledge with auto-generated quizzes and flashcards. Active recall made effortless.</p>
+      <img class="feature-img" src="assets/onboarding_games.png" alt="Quizzes & Games">
+    </div>
+    <div class="feature-card fade-up">
+      <div class="feature-icon"><img src="assets/ai_tools.png" alt="Image Gen"></div>
+      <h3>Image Generation</h3>
+      <p>Generate diagrams, illustrations and visual aids from your study material to deepen understanding.</p>
+    </div>
+    <div class="feature-card fade-up">
+      <div class="feature-icon"><img src="assets/camera.png" alt="Camera"></div>
+      <h3>Camera Assistant</h3>
+      <p>Point your camera at any problem, equation or page — get instant AI-powered help on the spot.</p>
+    </div>
+  </div>
 </div>
 </section>
 
-<!-- How It Works -->
-<section class="how" id="how">
+<!-- Screenshots Carousel -->
+<section class="section">
 <div class="container">
-<div class="section-header reveal" style="text-align:center">
-<span class="section-tag">How It Works</span>
-<h2 class="section-title">From PDF to mastery in minutes</h2>
-<p class="section-sub" style="margin:0 auto">Three simple steps to transform how you study.</p>
+  <div class="section-label fade-up">See It in Action</div>
+  <div class="section-title fade-up">Designed for focus</div>
+  <p class="section-sub fade-up">A clean, distraction-free experience built for students.</p>
 </div>
-<div class="how-steps">
-<div class="how-step reveal">
-<div class="how-num">1</div>
-<div class="how-content">
-<h3>Upload your study material</h3>
-<p>Drop in any PDF — lecture notes, textbook chapters, past papers. Semester AI ingests it instantly and maps out every concept.</p>
-</div>
-</div>
-<div class="how-step reveal reveal-delay-1">
-<div class="how-num">2</div>
-<div class="how-content">
-<h3>Choose how you want to learn</h3>
-<p>Chat with AI tutors, generate flashcards, take quizzes, or create an interactive presentation. Multiple learning modes, one document.</p>
-</div>
-</div>
-<div class="how-step reveal reveal-delay-2">
-<div class="how-num">3</div>
-<div class="how-content">
-<h3>Ace your exams</h3>
-<p>Track progress across courses and universities. Study smarter, not harder — with AI that adapts to how you learn best.</p>
-</div>
-</div>
-</div>
+<div class="carousel-wrap fade-up">
+  <div class="carousel-track">
+    <img src="assets/screen_v2_1.png" alt="Screenshot">
+    <img src="assets/screen_carousel1.png" alt="Screenshot">
+    <img src="assets/screen_v2_pres.png" alt="Screenshot">
+    <img src="assets/screen_carousel2.png" alt="Screenshot">
+    <img src="assets/screen_v2_2.png" alt="Screenshot">
+    <img src="assets/screen_v2_3.png" alt="Screenshot">
+  </div>
 </div>
 </section>
 
 <!-- Testimonials -->
-<section class="testimonials">
+<section class="section" id="testimonials">
 <div class="container">
-<div class="section-header reveal" style="text-align:center">
-<span class="section-tag">Loved by Students</span>
-<h2 class="section-title">What students are saying</h2>
-</div>
-<div class="test-grid">
-<div class="test-card reveal">
-<div class="test-stars">★★★★★</div>
-<div class="test-text">"I uploaded my pharmacology notes and within seconds I had flashcards, quizzes, and an AI tutor explaining drug interactions. My GPA went up a full point."</div>
-<div class="test-author">
-<div class="test-avatar">A</div>
-<div><div class="test-name">Amina K.</div><div class="test-uni">University of Lagos</div></div>
-</div>
-</div>
-<div class="test-card reveal reveal-delay-1">
-<div class="test-stars">★★★★★</div>
-<div class="test-text">"The presentation mode is insane. I turned a 50-page PDF into a narrated presentation for my study group. Everyone thought I spent hours on it."</div>
-<div class="test-author">
-<div class="test-avatar">D</div>
-<div><div class="test-name">David O.</div><div class="test-uni">University of Nairobi</div></div>
-</div>
-</div>
-<div class="test-card reveal reveal-delay-2">
-<div class="test-stars">★★★★★</div>
-<div class="test-text">"Having Einstein explain my physics notes with an actual voice? That's not studying — that's an experience. I've never been this excited to revise."</div>
-<div class="test-author">
-<div class="test-avatar">F</div>
-<div><div class="test-name">Fatou S.</div><div class="test-uni">Université Cheikh Anta Diop</div></div>
-</div>
-</div>
-</div>
+  <div class="section-label fade-up">Testimonials</div>
+  <div class="section-title fade-up">Loved by students across Africa</div>
+  <p class="section-sub fade-up">Join thousands already studying smarter.</p>
+  <div class="testimonials-grid">
+    <div class="testimonial fade-up">
+      <div class="stars">★★★★★</div>
+      <blockquote>"Semester AI turned my 200-page anatomy textbook into something I could actually understand. I went from C's to A's in one semester."</blockquote>
+      <div class="author">
+        <div class="avatar">AO</div>
+        <div><div class="name">Amina Osei</div><div class="school">University of Ghana</div></div>
+      </div>
+    </div>
+    <div class="testimonial fade-up">
+      <div class="stars">★★★★★</div>
+      <blockquote>"The presentation feature saved me hours before my thesis defense. I uploaded my paper and had slides ready in minutes. Absolute game changer."</blockquote>
+      <div class="author">
+        <div class="avatar">KM</div>
+        <div><div class="name">Kwame Mensah</div><div class="school">University of Cape Town</div></div>
+      </div>
+    </div>
+    <div class="testimonial fade-up">
+      <div class="stars">★★★★★</div>
+      <blockquote>"I use the quizzes every night before bed. It's like having a study partner who never gets tired. My GPA has never been higher."</blockquote>
+      <div class="author">
+        <div class="avatar">FN</div>
+        <div><div class="name">Fatima Ndiaye</div><div class="school">University of Lagos</div></div>
+      </div>
+    </div>
+  </div>
 </div>
 </section>
 
 <!-- Coming Soon -->
-<section class="coming" id="coming">
+<section class="section">
 <div class="container">
-<div class="section-header reveal" style="text-align:center">
-<span class="section-tag">🔮 Coming Soon</span>
-<h2 class="section-title">The future of learning is being built</h2>
-<p class="section-sub" style="margin:0 auto">We're just getting started. Here's what's on the roadmap.</p>
-</div>
-<div class="coming-grid">
-<div class="coming-card reveal">
-<div class="cc-icon">🎙️</div>
-<div>
-<h4>AI Podcast Generation</h4>
-<p>Turn your documents into multi-voice podcasts. Listen to your study material on the go with AI-generated discussions between experts.</p>
-<span class="cc-badge">Q2 2026</span>
-</div>
-</div>
-<div class="coming-card reveal reveal-delay-1">
-<div class="cc-icon">⚔️</div>
-<div>
-<h4>Expert Debates</h4>
-<p>Watch AI tutors debate and argue about your content from different perspectives. Understand every angle of complex topics.</p>
-<span class="cc-badge">Q2 2026</span>
-</div>
-</div>
-<div class="coming-card reveal reveal-delay-2">
-<div class="cc-icon">🧬</div>
-<div>
-<h4>Auto-Generated Tutors</h4>
-<p>Upload a biology PDF and a virtual Darwin appears. AI automatically creates the perfect expert tutor for any content.</p>
-<span class="cc-badge">Q3 2026</span>
-</div>
-</div>
-<div class="coming-card reveal reveal-delay-3">
-<div class="cc-icon">🎮</div>
-<div>
-<h4>Duolingo-Style Learning Paths</h4>
-<p>Gamified, structured learning paths generated from your documents. Streaks, XP, and mastery tracking for every topic.</p>
-<span class="cc-badge">Q3 2026</span>
-</div>
-</div>
-<div class="coming-card reveal">
-<div class="cc-icon">🎬</div>
-<div>
-<h4>Video & Reels Generation</h4>
-<p>Transform your study material into short-form educational videos. Create TikTok-style explainers from any PDF.</p>
-<span class="cc-badge">Q4 2026</span>
-</div>
-</div>
-<div class="coming-card reveal reveal-delay-1">
-<div class="cc-icon">🔗</div>
-<div>
-<h4>Multi-Document Synthesis</h4>
-<p>Connect multiple PDFs and let AI find relationships, contradictions, and synergies across all your course materials.</p>
-<span class="cc-badge">Q4 2026</span>
-</div>
-</div>
-</div>
+  <div class="section-label fade-up">Coming Soon</div>
+  <div class="section-title fade-up">We're just getting started</div>
+  <p class="section-sub fade-up">The future of studying is about to get even better.</p>
+  <div class="coming-grid">
+    <div class="coming-card fade-up">
+      <div class="emoji">🎙️</div>
+      <h3>AI Podcasts</h3>
+      <p>Turn your documents into engaging audio discussions. Learn on the go — during commutes, workouts, or downtime.</p>
+    </div>
+    <div class="coming-card fade-up">
+      <div class="emoji">🧭</div>
+      <h3>Learning Paths</h3>
+      <p>Personalized study roadmaps that adapt to your pace and goals. Never wonder what to study next.</p>
+    </div>
+    <div class="coming-card fade-up">
+      <div class="emoji">🤖</div>
+      <h3>Auto-Tutors</h3>
+      <p>Always-on AI tutors for every course. Like having a private teacher available 24/7, for every subject.</p>
+    </div>
+  </div>
 </div>
 </section>
 
 <!-- Pricing -->
-<section class="pricing" id="pricing">
+<section class="section" id="pricing">
 <div class="container">
-<div class="section-header reveal" style="text-align:center">
-<span class="section-tag">Pricing</span>
-<h2 class="section-title">Start free. Upgrade when you're ready.</h2>
-<p class="section-sub" style="margin:0 auto">Built for students. Priced for students.</p>
-</div>
-<div class="pricing-grid">
-<div class="price-card reveal">
-<div class="price-name">Free</div>
-<div class="price-amount">$0<span>/month</span></div>
-<div class="price-desc">Everything you need to get started</div>
-<ul class="price-features">
-<li>AI Tutors with basic voices</li>
-<li>PDF upload & AI chat</li>
-<li>Flashcards & quizzes</li>
-<li>5 documents per month</li>
-<li>Camera assistant</li>
-</ul>
-<a href="#" class="price-btn price-btn-outline">Get Started Free</a>
-</div>
-<div class="price-card featured reveal reveal-delay-1">
-<div class="price-name">Pro</div>
-<div class="price-amount">$3<span>/month</span></div>
-<div class="price-desc">Unlimited learning, zero limits</div>
-<ul class="price-features">
-<li>Everything in Free</li>
-<li>Unlimited documents</li>
-<li>Premium multi-voice TTS</li>
-<li>Presentation mode</li>
-<li>AI image generation</li>
-<li>Priority AI responses</li>
-<li>Early access to new features</li>
-</ul>
-<a href="#" class="price-btn price-btn-fill">Upgrade to Pro</a>
-</div>
-</div>
+  <div class="section-label fade-up" style="text-align:center">Pricing</div>
+  <div class="section-title fade-up" style="text-align:center">Start free. Upgrade when you're ready.</div>
+  <p class="section-sub fade-up" style="text-align:center;margin-left:auto;margin-right:auto">No credit card required. No hidden fees.</p>
+  <div class="pricing-grid">
+    <div class="price-card fade-up">
+      <div class="price-name">Free</div>
+      <div class="price-amount">$0</div>
+      <div class="price-desc">Perfect for getting started</div>
+      <ul class="price-features">
+        <li>5 documents per month</li>
+        <li>AI Tutors</li>
+        <li>PDF Summaries</li>
+        <li>Basic Quizzes</li>
+        <li>Camera Assistant</li>
+      </ul>
+      <a href="https://play.google.com/store/apps/details?id=com.axelc.semester" class="price-btn price-btn-outline">Get Started Free</a>
+    </div>
+    <div class="price-card popular fade-up">
+      <div class="price-name">Pro</div>
+      <div class="price-amount">$3<span>/mo</span></div>
+      <div class="price-desc">For serious students</div>
+      <ul class="price-features">
+        <li>Unlimited documents</li>
+        <li>Everything in Free</li>
+        <li>Presentations</li>
+        <li>Image Generation</li>
+        <li>Advanced Flashcards</li>
+        <li>Priority AI responses</li>
+      </ul>
+      <a href="https://play.google.com/store/apps/details?id=com.axelc.semester" class="price-btn price-btn-fill">Upgrade to Pro</a>
+    </div>
+  </div>
 </div>
 </section>
 
 <!-- Final CTA -->
 <section class="final-cta">
-<div class="container reveal">
-<h2>Ready to transform how you study?</h2>
-<p>Join thousands of African university students who are learning smarter with AI.</p>
-<a href="#" class="btn-primary" style="display:inline-flex">
-<svg class="play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15C4.34,1.91 4.93,1.97 5.37,2.31L15.45,10.31C15.81,10.59 16,11.03 16,11.5C16,11.97 15.81,12.41 15.45,12.69L5.37,20.69C5.09,20.9 4.75,21 4.41,21C4.22,21 4.03,20.97 3.84,20.85C3.34,20.61 3,20.09 3,19.5V20.5ZM20,3V21H18V3H20Z"/></svg>
-Download on Google Play
-</a>
+<div class="container fade-up">
+  <img src="assets/semester_logo_bg.png" alt="Semester AI" style="height:64px;margin:0 auto 32px;opacity:.8">
+  <h2>Ready to transform how you study?</h2>
+  <p>Join thousands of students already learning smarter with Semester AI.</p>
+  <a href="https://play.google.com/store/apps/details?id=com.axelc.semester" class="btn-primary">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 01-.61-.92V2.734a1 1 0 01.609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.199l2.302 2.302a1 1 0 010 1.38l-2.302 2.302L15.396 13l2.302-2.492zM5.864 2.658L16.8 8.99l-2.302 2.302-8.634-8.634z"/></svg>
+    Download on Google Play
+  </a>
 </div>
 </section>
 
 <!-- Footer -->
 <footer>
 <div class="container">
-<p>© 2026 Semester AI. Built with ❤️ for African students.</p>
+  <img src="assets/semester_logo.png" alt="Semester AI">
+  <div class="links">
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="mailto:support@semester.ai">Contact</a>
+  </div>
+  <div class="copy">© 2025 Semester AI. All rights reserved.</div>
 </div>
 </footer>
 
 <script>
+// Intersection Observer for fade-up animations
 const obs = new IntersectionObserver((entries) => {
   entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }});
-}, { threshold: 0.1 });
-document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+
+// Auto-scroll carousel
+const track = document.querySelector('.carousel-track');
+if (track) {
+  let dir = 1, pos = 0;
+  const speed = .5;
+  function autoScroll() {
+    const max = track.scrollWidth - track.parentElement.clientWidth;
+    pos += speed * dir;
+    if (pos >= max) dir = -1;
+    if (pos <= 0) dir = 1;
+    track.parentElement.scrollLeft = pos;
+    requestAnimationFrame(autoScroll);
+  }
+  autoScroll();
+  track.parentElement.addEventListener('pointerdown', () => { speed = 0; });
+}
 </script>
 </body>
 </html>
